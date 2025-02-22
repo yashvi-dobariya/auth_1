@@ -1,5 +1,6 @@
 package com.javadev.auth_1;
 
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -15,11 +16,17 @@ public class SpringConfig {
                     registry.requestMatchers("/", "/login").permitAll();
                     registry.anyRequest().authenticated();
                 })
-                .oauth2Login(oauth2login -> {
+                .oauth2Login(oauth2login ->
                     oauth2login
                             .loginPage("/login")
-                            .successHandler((request, response, authentication) -> response.sendRedirect("/profile"));
-                })
+                            .successHandler((request, response, authentication) -> response.sendRedirect("/profile"))
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/logout") // Custom logout URL
+                        .logoutSuccessUrl("/login?logout") // Redirect to login page after logout
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
+                )
                 .build();
     }
 }
